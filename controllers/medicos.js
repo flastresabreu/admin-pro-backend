@@ -52,18 +52,73 @@ const crearMedicos = async(req, res = response) => {
     
 }
 
-const actualizarMedicos = (req, res = response) => {
-    res.status(200).json({
-        ok: true,
-        msg: 'actualizarMedicos'
-    })
+const actualizarMedicos = async (req, res = response) => {
+
+    try {
+
+        const uid = req.params.id;
+
+        const medicoDb = await Medico.findById(uid);
+
+        if(!medicoDb){
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe medico con ese id'
+            })
+        }
+
+        const medicoCambios = {
+            ... req.body
+        }
+
+        const medicosActualizados = await Medico.findByIdAndUpdate(uid, medicoCambios, {new:true});
+
+        res.status(200).json({
+            ok: true,
+            resultado: medicosActualizados
+        })
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: true,
+            mg: 'Error inesperado contacte con el administrador'
+        })
+    }
+   
 }
 
-const eliminarMedicos = (req, res = response) => {
-    res.status(200).json({
-        ok: true,
-        msg: 'eliminarMedicos'
+const eliminarMedicos = async (req, res = response) => {
+
+    try {
+        
+        const uid = req.params.id;
+
+        const medicoDB = await Medico.findById(uid);
+
+        if(!medicoDB){
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe medico con ese id'
+            })
+        }
+
+        await Medico.findByIdAndDelete(uid);
+
+        res.status(200).json({
+            ok: true,
+            msg: 'Medico eliminado satisfactoriamente'
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+        ok: false,
+        msg: 'Error inesperado contacte con el administrador'
     })
+    }
+
+    
 }
 
 module.exports = {
