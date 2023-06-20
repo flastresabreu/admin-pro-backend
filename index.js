@@ -19,7 +19,7 @@ app.use(express.json());
 //Base Datos
 dbconnection();
 
-console.log(process.env);
+// console.log(process.env);
 
 //franke
 //1zTKY8cqo2flDZFb

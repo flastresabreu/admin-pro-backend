@@ -8,7 +8,7 @@ const { googleVerify } = require('../helpers/google-verify');
 
 const login = async(req, res = response) => {
 
-    const {email, password} = req.body
+    const {email, password, img} = req.body
 
     try {
         //Verificar Email
@@ -38,7 +38,8 @@ const login = async(req, res = response) => {
             ok: true,
             email,
             password, 
-            token
+            token,
+            img
         })
 
     } catch (error) {
@@ -103,10 +104,13 @@ const reNew = async (req, res= response) => {
     //Generar el TOKEN - JWT
     const token = await generarJWT(uid);
 
+    //Obtener usuario por Id
+    const usuario = await Usuario.findById(uid);
+
     res.status(200).json({
         ok: true,
-        uid,
-        token
+        token,
+        usuario       
     })
 }
 
