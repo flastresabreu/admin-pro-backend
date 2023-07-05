@@ -6,11 +6,12 @@ const getHospitales = async (req, res = response) => {
     try {
 
         const hospitales = await Hospital.find()
-                                            .populate('usuario', 'nombre img');
-        
+                                        .populate('usuario','nombre img');
+                                      
+
         res.status(200).json({
             ok: true,
-            msg: hospitales
+            hospitales
         })
 
     } catch (error) {
@@ -53,38 +54,43 @@ const crearHospitales = async(req, res = response) => {
 
 const actualizarHospitales = async (req, res = response) => {
 
+    const id  = req.params.id;
+    const uid = req.uid;
+
     try {
+        
+        const hospital = await Hospital.findById( id );
 
-        const uid = req.params.id;
-        const hospitalDb = await Hospital.findById(uid);
-
-        if(!hospitalDb){
+        if ( !hospital ) {
             return res.status(404).json({
-                ok: false,
-                msg: 'No existe hospital con ese id'
-            })
+                ok: true,
+                msg: 'Hospital no encontrado por id',
+            });
         }
 
-        const hospitaCambios = {
+        const cambiosHospital = {
             ...req.body,
             usuario: uid
         }
 
-        const hospitalActualizado = await Hospital.findByIdAndUpdate(uid, hospitaCambios, {new:true})
+        const hospitalActualizado = await Hospital.findByIdAndUpdate( id, cambiosHospital, { new: true } );
 
-        res.status(200).json({
+
+        res.json({
             ok: true,
-            msg: `Hospital ${uid} fue actualizado`,
             hospital: hospitalActualizado
         })
-        
+
     } catch (error) {
+
         console.log(error);
+
         res.status(500).json({
             ok: false,
-            msg: 'Error inesperado contacte con el administrador'
+            msg: 'Hable con el administrador'
         })
     }
+
 }
 
 const eliminarHospitales = async (req, res = response) => {

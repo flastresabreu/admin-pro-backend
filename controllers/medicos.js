@@ -6,7 +6,7 @@ const getMedicos = async (req, res = response) => {
     try {
         
         const medicos = await Medico.find()
-                                    .populate('usuario', 'nombre')
+                                    .populate('usuario', 'nombre img')
                                     .populate('hospital', 'nombre');
 
         res.status(200).json({
@@ -22,6 +22,25 @@ const getMedicos = async (req, res = response) => {
         })
     }
     
+}
+
+const getMedicoById = async(req, res = response) => {
+    try {
+        const uid = req.params.id;
+        const medico = await Medico.findById(uid);
+
+        res.status(200).json({
+            ok: true,
+            medico: medico
+        })
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado contacte con el administrador'
+        })
+    }
 }
 
 const crearMedicos = async(req, res = response) => {
@@ -123,6 +142,7 @@ const eliminarMedicos = async (req, res = response) => {
 
 module.exports = {
     getMedicos,
+    getMedicoById,
     crearMedicos,
     actualizarMedicos,
     eliminarMedicos
